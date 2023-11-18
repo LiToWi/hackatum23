@@ -46,23 +46,26 @@ function getProgram(wallet: WalletContextState) {
         PREFLIGHT_COMMITMENT
     );
 
-    // @ts-ignore
-    return new Program(idl, programId, provider);
+    const [userAccountPublicKey] = web3.PublicKey.findProgramAddressSync(
+        [
+            Buffer.from('user2'),
+            wallet.publicKey!.toBuffer(),
+            userMint.toBuffer(),
+        ], // USD Coin
+        programId
+    );
+
+    return {
+        userAccountPublicKey,
+        // @ts-ignore
+        program: new Program(idl, programId, provider),
+    };
 }
 
 export async function getUser(wallet: WalletContextState) {
-    const program = getProgram(wallet);
+    const { program, userAccountPublicKey } = getProgram(wallet);
 
     try {
-        const [userAccountPublicKey] = await web3.PublicKey.findProgramAddress(
-            [
-                Buffer.from('user2'),
-                wallet.publicKey!.toBuffer(),
-                userMint.toBuffer(),
-            ], // USD Coin
-            programId
-        );
-
         const accountInfo = await program.provider.connection.getAccountInfo(
             userAccountPublicKey
         );
