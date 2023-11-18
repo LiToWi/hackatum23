@@ -2,12 +2,6 @@ export type User = {
     accounts: number;
 };
 
-export type Payment = {
-    amount: number;
-    date: string;
-    id: number;
-};
-
 export type Saving = {
     accessible: boolean;
     staking: boolean;
@@ -16,7 +10,8 @@ export type Saving = {
     goal: number;
     name: string;
     id: number;
-    payments: Payment[];
+    datesOfPayments: number[];
+    amountsOfPayments: number[];
 };
 
 export function getUser(): User | null {
