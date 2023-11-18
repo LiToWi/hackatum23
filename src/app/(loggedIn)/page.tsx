@@ -9,14 +9,19 @@ import { useRef, useEffect, useState } from 'react';
 const PIG_CONTAINER_CLASS = 'pig-container';
 
 export default function Home() {
-    const pig = useRef(initCanvas({
-        containerId: PIG_CONTAINER_CLASS,
-        width: window.innerWidth,
-        height: window.innerHeight,
-        balance: 50,
-        level: 1,
-        mood: 5
-    }));
+    const pig = useRef<ReturnType<typeof initCanvas>>(null);
+
+    useEffect(() => {
+        console;
+        pig.current = initCanvas({
+            containerId: PIG_CONTAINER_CLASS,
+            width: window.innerWidth,
+            height: window.innerHeight,
+            balance: 50,
+            level: 1,
+            mood: 5,
+        });
+    }, []);
 
     const [coinValue, setCoinValue] = useState(50);
 
@@ -30,6 +35,7 @@ export default function Home() {
 
     return (
         <main className="relative h-full">
+            <div id={PIG_CONTAINER_CLASS}></div>
             <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1/2 bg-yellow-300 p-5 flex">
                 <div className="relative mr-10">
                     <Image src="/coin.png" alt="Coin" width={80} height={80} />
@@ -44,7 +50,6 @@ export default function Home() {
                     step={1}
                 />
             </div>
-            <div className={PIG_CONTAINER_CLASS}></div>
         </main>
     );
 }
