@@ -1,0 +1,101 @@
+{
+    "version": "0.1.0",
+    "name": "fizzbuzz",
+    "instructions": [
+        {
+            "name": "addToSaving",
+            "accounts": [
+                { "name": "owner", "isMut": true, "isSigner": true },
+                { "name": "saving", "isMut": true, "isSigner": false },
+                { "name": "senderAccount", "isMut": true, "isSigner": false },
+                {
+                    "name": "recipiantAccount",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                { "name": "tokenProgram", "isMut": false, "isSigner": false }
+            ],
+            "args": [{ "name": "amount", "type": "u64" }]
+        },
+        {
+            "name": "getSavings",
+            "accounts": [
+                { "name": "saving", "isMut": true, "isSigner": false },
+                { "name": "senderAccount", "isMut": true, "isSigner": false },
+                {
+                    "name": "recipiantAccount",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                { "name": "authAccount", "isMut": true, "isSigner": false },
+                { "name": "clock", "isMut": false, "isSigner": false },
+                { "name": "tokenProgram", "isMut": false, "isSigner": false }
+            ],
+            "args": [{ "name": "amount", "type": "u64" }]
+        },
+        {
+            "name": "savingInit",
+            "accounts": [
+                { "name": "owner", "isMut": true, "isSigner": true },
+                { "name": "saving", "isMut": true, "isSigner": false },
+                { "name": "tokenAccount", "isMut": true, "isSigner": false },
+                { "name": "tokenAuth", "isMut": true, "isSigner": false },
+                { "name": "usersMint", "isMut": true, "isSigner": false },
+                { "name": "user", "isMut": true, "isSigner": false },
+                { "name": "clock", "isMut": false, "isSigner": false },
+                { "name": "rent", "isMut": false, "isSigner": false },
+                { "name": "systemProgram", "isMut": false, "isSigner": false },
+                { "name": "tokenProgram", "isMut": false, "isSigner": false }
+            ],
+            "args": [
+                { "name": "goal", "type": "u64" },
+                { "name": "name", "type": "string" },
+                { "name": "dauer", "type": "i64" }
+            ]
+        },
+        {
+            "name": "userInit",
+            "accounts": [
+                { "name": "owner", "isMut": true, "isSigner": true },
+                { "name": "user", "isMut": true, "isSigner": false },
+                { "name": "usersMint", "isMut": true, "isSigner": false },
+                { "name": "rent", "isMut": false, "isSigner": false },
+                { "name": "systemProgram", "isMut": false, "isSigner": false }
+            ],
+            "args": []
+        }
+    ],
+    "accounts": [
+        {
+            "name": "Auth",
+            "type": {
+                "kind": "struct",
+                "fields": [{ "name": "id", "type": "u8" }]
+            }
+        },
+        {
+            "name": "Saving",
+            "type": {
+                "kind": "struct",
+                "fields": [
+                    { "name": "accessible", "type": "bool" },
+                    { "name": "staking", "type": "bool" },
+                    { "name": "accountBalance", "type": "u64" },
+                    { "name": "auszahlDatum", "type": "i64" },
+                    { "name": "goal", "type": "u64" },
+                    { "name": "name", "type": "string" },
+                    { "name": "owner", "type": "publicKey" },
+                    { "name": "id", "type": "u8" },
+                    { "name": "tokenAccount", "type": "publicKey" }
+                ]
+            }
+        },
+        {
+            "name": "User",
+            "type": {
+                "kind": "struct",
+                "fields": [{ "name": "anzahl", "type": "u8" }]
+            }
+        }
+    ]
+}

@@ -21,8 +21,6 @@ export function AuthForm() {
     const router = useRouter();
     const searchParams = useSearchParams();
 
-    console.log(searchParams);
-
     useEffect(() => {
         if (wallet.connected) {
             router.replace(searchParams.get('redirect') ?? '/');
@@ -32,10 +30,7 @@ export function AuthForm() {
     return (
         <div className="flex flex-col justify-around">
             <style>{css}</style>
-            <WalletMultiButton
-                onClick={(e) => console.log(e)}
-                className="test"
-            />
+            <WalletMultiButton className="test" />
         </div>
     );
 }

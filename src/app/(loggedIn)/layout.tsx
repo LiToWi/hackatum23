@@ -13,7 +13,6 @@ export default function RootLayout({
     const pathName = usePathname();
 
     if (!wallet.wallet) {
-        console.log(wallet);
         router.replace(`/login?${new URLSearchParams({ redirect: pathName })}`);
     }
 
