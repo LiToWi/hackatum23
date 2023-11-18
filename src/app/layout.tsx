@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
+import { Wallet } from '@/components/Wallet';
+import clsx from 'clsx';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -16,8 +18,10 @@ export default function RootLayout({
     children: React.ReactNode;
 }) {
     return (
-        <html lang="de">
-            <body className={inter.className}>{children}</body>
+        <html lang="en" className="h-full">
+            <body className={clsx(inter.className, 'h-screen w-screen')}>
+                <Wallet>{children}</Wallet>
+            </body>
         </html>
     );
 }
