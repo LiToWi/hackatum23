@@ -1,4 +1,3 @@
-//   import { useAnchorWallet } from '@solana/wallet-adapter-react';
 'use client';
 
 import { Slider } from '@/components/ui/slider';
@@ -9,10 +8,9 @@ import { useRef, useEffect, useState } from 'react';
 const PIG_CONTAINER_CLASS = 'pig-container';
 
 export default function Home() {
-    const pig = useRef<ReturnType<typeof initCanvas>>(null);
+    const pig = useRef<ReturnType<typeof initCanvas> | null>(null);
 
     useEffect(() => {
-        console;
         pig.current = initCanvas({
             containerId: PIG_CONTAINER_CLASS,
             width: window.innerWidth,
