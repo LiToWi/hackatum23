@@ -2,13 +2,21 @@
 'use client';
 
 import { Slider } from '@/components/ui/slider';
+import { initCanvas } from '@/lib/piggy';
 import Image from 'next/image';
 import { useRef, useEffect, useState } from 'react';
 
 const PIG_CONTAINER_CLASS = 'pig-container';
 
 export default function Home() {
-    const pig = useRef(null);
+    const pig = useRef(initCanvas({
+        containerId: PIG_CONTAINER_CLASS,
+        width: window.innerWidth,
+        height: window.innerHeight,
+        balance: 50,
+        level: 1,
+        mood: 5
+    }));
 
     const [coinValue, setCoinValue] = useState(50);
 
