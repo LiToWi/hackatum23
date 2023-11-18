@@ -10,8 +10,8 @@ export type Saving = {
     goal: number;
     name: string;
     id: number;
-    datesOfPayments: number[];
-    amountsOfPayments: number[];
+    datesOfPayments: number[100];
+    amountsOfPayments: number[100];
 };
 
 export function getUser(): User | null {
