@@ -1,4 +1,3 @@
-//   import { useAnchorWallet } from '@solana/wallet-adapter-react';
 'use client';
 
 import { Slider } from '@/components/ui/slider';
@@ -9,21 +8,27 @@ import { useRef, useEffect, useState } from 'react';
 const PIG_CONTAINER_CLASS = 'pig-container';
 
 export default function Home() {
-    const pig = useRef<ReturnType<typeof initCanvas>>(null);
+    const pig = useRef<ReturnType<typeof initCanvas> | null>(null);
 
-    useEffect(() => {
-        console;
+    const [coinWorth, setCoinWorth] = useState(50);
+    const [balance, setBalance] = useState(100);
+    const goal = 1000;
+
+    useEffect(() => { //TODO REMOVE MOCK
         pig.current = initCanvas({
             containerId: PIG_CONTAINER_CLASS,
             width: window.innerWidth,
             height: window.innerHeight,
-            balance: 50,
-            level: 1,
-            mood: 5,
+            startTime: 0,//MOCK
+            endTime: 0,//MOCK
+            goal: 0, //MOCK
+            getBalance: () => 100,//MOCK
+            getCoinWorth: () => 5,//MOCK
+            onPayment: (amount: number) => {//MOCK
+                setBalance((prev) => prev + amount);
+            }
         });
     }, []);
-
-    const [coinValue, setCoinValue] = useState(50);
 
     useEffect(() => {
         const handler = () => {
@@ -40,14 +45,17 @@ export default function Home() {
                 <div className="relative mr-10">
                     <Image src="/coin.png" alt="Coin" width={80} height={80} />
                     <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white font-black text-4xl">
-                        {coinValue}
+                        {coinWorth}
                     </div>
                 </div>
                 <Slider
-                    onValueChange={([n]) => setCoinValue(n)}
-                    defaultValue={[coinValue]}
-                    max={100}
-                    step={1}
+                    onValueChange={(values: number[]) => {
+                        const [n] = values;
+                        setCoinWorth(n);
+                    }}
+                    defaultValue={[coinWorth]} //TODO Balance/2
+                    max={100} //TODO Balance
+                    step={1} //TODO 0.1
                 />
             </div>
         </main>
