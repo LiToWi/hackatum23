@@ -12,11 +12,6 @@ type Options = {
     containerId: string;
     width: number;
     height: number;
-    startTime: Date;
-    endTime: Date;
-    goal: number;
-    payed: number;
-    name: string;
     getCoinWorth: () => number;
     onPayment: (amount: number) => void;
     onAdd: () => void;
@@ -32,22 +27,42 @@ export function initCanvas(options: Options) {
         width: options.width,
         height: options.height,
     });
-
-    var layer = new Konva.Layer();
+    const layer = new Konva.Layer();
     const serviceLayer = new Konva.Layer({
         listening: false,
     });
 
+    const pigWidth = stage.width() / 2.7;
+    const pigHeight = (pigWidth / 200) * 137;
+    const addPig = (saving: Saving) => {
+        const x =
+            ((5 * saving.id + 1) % 7) *
+                (stage.width() / (pigWidth + stage.width() * 0.2)) +
+            pigWidth / 2;
+        const y =
+            ((5 * saving.id + 1) % 3) *
+                (stage.height() / (pigHeight + stage.height() * 0.2)) +
+            stage.height() / 2;
+        const pig = new Pig(
+            pigWidth,
+            pigHeight,
+            x,
+            y,
+            saving,
+            layer,
+            serviceLayer
+        );
+
+        return pig;
+    };
+
     // Text
     var payment_text = new Konva.Text({
-        //TODO customize
         x: stage.width() / 2,
         y: -100,
-        text: '+0 SOL',
         fontSize: 30,
         fontFamily: 'Calibri',
-        fill: 'red',
-        visible: true,
+        fill: 'green',
     });
 
     //Treasure
@@ -86,49 +101,6 @@ export function initCanvas(options: Options) {
         y: stage.height() - 250,
         width: 400 / 3,
         height: 600 / 3,
-        draggable: true,
-        visble: false,
-    });
-
-    const pig = new Pig(
-        pig_width,
-        pig_height,
-        stage.width() / 2 - pig_width / 2,
-        stage.height() / 2 - pig_height / 2,
-        options.savings[0]
-    );
-
-    //Shards
-    var shard1_img = new Image();
-    shard1_img.src = '/BrokenPiggy1.png';
-    var shard1_konva = new Konva.Image({
-        image: shard1_img,
-        x: -10000,
-        y: 0,
-        width: 3 * pig.element.width()/5,
-        height: 8 * pig.element.height() / 10 ,
-        draggable: true,
-        visble: false,
-    });
-    var shard2_img = new Image();
-    shard2_img.src = '/BrokenPiggy2.png';
-    var shard2_konva = new Konva.Image({
-        image: shard2_img,
-        x: -10000,
-        y: 0,
-        width: 2 * pig.element.width()/3,
-        height: 2 * pig.element.height()/3,
-        draggable: true,
-        visble: false,
-    });
-    var shard3_img = new Image();
-    shard3_img.src = '/BrokenPiggy3.png';
-    var shard3_konva = new Konva.Image({
-        image: shard3_img,
-        x: -10000,
-        y: 0,
-        width: 3 * pig.element.width()/5,
-        height: 2 * pig.element.height()/3,
         draggable: true,
         visble: false,
     });
@@ -172,7 +144,7 @@ export function initCanvas(options: Options) {
             options.onPayment(options.getCoinWorth());
         }
 
-        if (options.payed >= options.goal) {
+        if (true) {
             sledge_konva.show();
         }
 
@@ -187,41 +159,22 @@ export function initCanvas(options: Options) {
         document.body.style.cursor = 'grab';
     });
     sledge_konva.on('dragend', function () {
-        if((sledge_konva.x()+sledge_konva.getWidth()) > pig.element.x() && (sledge_konva.x()+30/450*pig.element.width()) < pig.element.x() + pig.element.width() && (sledge_konva.y() + sledge_konva.getHeight()-60/450*pig.element.height()) > pig.element.y() && (sledge_konva.y()+40) < pig.element.y() + pig.element.height()){
-            //DO STUFF
+        if (
+            sledge_konva.x() + sledge_konva.getWidth() > pig.element.x() &&
+            sledge_konva.x() + (30 / 450) * pig.element.width() <
+                pig.element.x() + pig.element.width() &&
+            sledge_konva.y() +
+                sledge_konva.getHeight() -
+                (60 / 450) * pig.element.height() >
+                pig.element.y() &&
+            sledge_konva.y() + 40 < pig.element.y() + pig.element.height()
+        ) {
             sledge_konva.hide();
-            pig.element.hide();
-
-            document.body.style.cursor = 'default';
-            shard1_konva.setPosition({ x: pig.element.x(), y: pig.element.y() });
-            shard2_konva.setPosition({ x: pig.element.x(), y: pig.element.y() });
-            shard3_konva.setPosition({ x: pig.element.x(), y: pig.element.y() });
-            shard1_konva.show();
-            shard2_konva.show();
-            shard3_konva.show();
-            pig.element.setPosition({ x: -10000, y: -10000 });
+            pig.break();
         }
     });
     sledge_konva.on('mouseleave', function () {
         document.body.style.cursor = 'grab';
-    });
-    shard1_konva.on('mouseover', function () {
-        document.body.style.cursor = 'grab';
-    });
-    shard2_konva.on('mouseover', function () {
-        document.body.style.cursor = 'grab';
-    });
-    shard3_konva.on('mouseover', function () {
-        document.body.style.cursor = 'grab';
-    });
-    shard1_konva.on('mouseleave', function () {
-        document.body.style.cursor = 'default';
-    });
-    shard2_konva.on('mouseleave', function () {
-        document.body.style.cursor = 'default';
-    });
-    shard3_konva.on('mouseleave', function () {
-        document.body.style.cursor = 'default';
     });
 
     //MS 95
@@ -251,50 +204,36 @@ export function initCanvas(options: Options) {
 
     //Staging
     layer.add(ms95_konva);
-    layer.add(scheune_konva);
-    pig.mount(layer);
+    const pigs = options.savings.map(addPig);
+    const pig = pigs[0];
     layer.add(treasure_konva);
+    layer.add(scheune_konva);
+    layer.add(coin_konva);
     layer.add(coin_konva);
     layer.add(sledge_konva);
-    layer.add(shard1_konva);
-    layer.add(shard2_konva);
-    layer.add(shard3_konva);
-    layer.add(coin_konva);
+
     stage.add(layer);
 
-    pig.mountService(serviceLayer);
+
     serviceLayer.add(payment_text);
     stage.add(serviceLayer);
 
     //Animation
     let acceleration = 1.3;
-    let speed = -0.5;
-
-    var anim = new Konva.Animation(function (frame) {
-        payment_text.y(payment_text.y() + Math.max(speed * acceleration, -10));
+    let anim = new Konva.Animation(() => {
+        payment_text.y(payment_text.y() + Math.max(-0.5 * acceleration, -10));
         acceleration += 0.1;
-    }, serviceLayer);
+    }, serviceLayer).start();
 
     anim.start();
 
-    let n = 1
-    var movePig = new Konva.Animation(function (frame) {
-        if (pig.element.x() + pig.element.width() >= stage.width()) {
-            n = -1;
-        }
-        else if (pig.element.x() <= 0){
-            n = 1;
-        }
-        pig.element.x(Math.random() > 0.5 ? pig.element.x() + n : 0);
-    }, layer);
-
-    movePig.start();
-
-    //Expose Functionality
+    // expose Functionality
     return {
         setDimensions: (width: number, height: number) => {
             stage.width(width);
             stage.height(height);
+            stage.draw();
         },
+        addPig,
     };
 }
