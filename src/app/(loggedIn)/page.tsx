@@ -95,7 +95,7 @@ export default function Home() {
     return (
         <main className="relative h-full">
             <div id={PIG_CONTAINER_CLASS}></div>
-            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1/2 bg-yellow-300 p-5 flex">
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 bg-grey-300 p-5 flex">
                 <div className="relative mr-10">
                     <Image src="/coin.png" alt="Coin" width={80} height={80} />
                     <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white font-black text-4xl">

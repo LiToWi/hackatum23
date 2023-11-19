@@ -23,7 +23,7 @@ type Options = {
 };
 
 export function initCanvas(options: Options) {
-    let pig_width = options.width / 2.7;
+    let pig_width = options.width / 7;
     let pig_height = (pig_width / 200) * 137;
 
     //Konva Stage
@@ -46,7 +46,7 @@ export function initCanvas(options: Options) {
         text: '+0 SOL',
         fontSize: 30,
         fontFamily: 'Calibri',
-        fill: 'green',
+        fill: 'red',
         visible: true,
     });
 
@@ -68,10 +68,10 @@ export function initCanvas(options: Options) {
 
     var coin_konva = new Konva.Image({
         image: coin_img,
-        x: treasure_konva.x(),
-        y: treasure_konva.y() + 100,
-        width: 100,
-        height: 100,
+        x: treasure_konva.x() + 25,
+        y: treasure_konva.y() + 110,
+        width: 50,
+        height: 50,
         draggable: true,
         visble: false,
     });
@@ -83,7 +83,7 @@ export function initCanvas(options: Options) {
     var sledge_konva = new Konva.Image({
         image: sledge_img,
         x: 0,
-        y: stage.height() / 2 - 200 / 2,
+        y: stage.height() - 250,
         width: 400 / 3,
         height: 600 / 3,
         draggable: true,
@@ -106,7 +106,7 @@ export function initCanvas(options: Options) {
         x: -10000,
         y: 0,
         width: 3 * pig.element.width()/5,
-        height: 9 * pig.element.height() / 10 ,
+        height: 8 * pig.element.height() / 10 ,
         draggable: true,
         visble: false,
     });
@@ -223,29 +223,42 @@ export function initCanvas(options: Options) {
         document.body.style.cursor = 'default';
     });
 
-    const add = new Konva.Rect({
-        x: 20,
-        y: 60,
-        stroke: '#555',
-        strokeWidth: 5,
-        fill: '#aaa',
-        width: 300,
-        height: 100,
+    //MS 95
+    let ms95_img = new Image();
+    ms95_img.src = '/GrüneWiese.png';
+    var ms95_konva = new Konva.Image({
+        image: ms95_img,
+        x: 0,
+        y: 0,
+        width: stage.width(),
+        height: stage.height(),
     });
-    add.addEventListener('click', () => {
+
+    //Scheune
+    let scheune_img = new Image();
+    scheune_img.src = '/Scheune.png';
+    var scheune_konva = new Konva.Image({
+        image: scheune_img,
+        x: 26,
+        y: stage.height() - 450,
+        width: 150,
+        height: 150,
+    });
+    scheune_konva.addEventListener('click', () => {
         options.onAdd();
     });
 
     //Staging
+    layer.add(ms95_konva);
+    layer.add(scheune_konva);
     pig.mount(layer);
     layer.add(treasure_konva);
     layer.add(coin_konva);
     layer.add(sledge_konva);
-    layer.add(add);
     layer.add(shard1_konva);
-        layer.add(shard2_konva);
-        layer.add(shard3_konva);
-        layer.add(coin_konva);
+    layer.add(shard2_konva);
+    layer.add(shard3_konva);
+    layer.add(coin_konva);
     stage.add(layer);
 
     pig.mountService(serviceLayer);
@@ -262,6 +275,19 @@ export function initCanvas(options: Options) {
     }, serviceLayer);
 
     anim.start();
+
+    // let n = 1
+    // var movePig = new Konva.Animation(function (frame) {
+    //     if (pig.element.x() + pig.element.width() >= stage.width()) {
+    //         n = -1;
+    //     }
+    //     else if (pig.element.x() <= 0){
+    //         n = 1;
+    //     }
+    //     pig.element.x(Math.random() > 0.5 ? pig.element.x() + n : 0);
+    // }, layer);
+
+    // movePig.start();
 
     //Expose Functionality
     return {
