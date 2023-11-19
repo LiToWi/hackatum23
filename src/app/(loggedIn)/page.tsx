@@ -1,19 +1,22 @@
 'use client';
 
+import { NewSaving } from '@/components/custom/NewSaving';
 import { Slider } from '@/components/ui/slider';
 import { initCanvas } from '@/lib/piggy';
-import { getSavings, pay } from '@/service';
+import { Saving, createSaving, getSavings, pay } from '@/service';
 import { useWallet } from '@solana/wallet-adapter-react';
 import Image from 'next/image';
 import { useRef, useEffect, useState } from 'react';
+import { DateRange } from 'react-day-picker';
 
 const PIG_CONTAINER_CLASS = 'pig-container';
 
 export default function Home() {
     const wallet = useWallet();
     const pig = useRef<ReturnType<typeof initCanvas> | null>(null);
-    const savings = useRef<Awaited<ReturnType<typeof getSavings>> | null>(null);
+    const savings = useRef<Saving[]>([]);
     const saving = savings.current?.[0];
+    const [newSavingIsShown, setNewSavingIsShown] = useState(false);
 
     const payed =
         saving?.payments.reduce((acc, curr) => acc + curr.amount, 0) ?? 0;
@@ -25,6 +28,27 @@ export default function Home() {
     const setCoinWorth = (coinWorth: number) => {
         coinWorthRef.current = coinWorth;
         _setCoinWorth(coinWorth);
+    };
+
+    const onNewSaving = ({
+        name,
+        goal,
+        date,
+    }: {
+        name: string;
+        goal: number;
+        date: DateRange;
+    }) => {
+        setNewSavingIsShown(false);
+        createSaving(wallet, {
+            name,
+            goal,
+            startDate: date.from!,
+            paymentDate: date.to!,
+        }).then((s) => {
+            if (!s) return;
+            savings.current!.push(s);
+        });
     };
 
     useEffect(() => {
@@ -84,6 +108,10 @@ export default function Home() {
                     step={1}
                 />
             </div>
+            <NewSaving
+                open={newSavingIsShown}
+                onSubmit={onNewSaving}
+            ></NewSaving>
         </main>
     );
 }
