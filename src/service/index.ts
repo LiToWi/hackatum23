@@ -137,11 +137,7 @@ export async function mock_getSavings(wallet: WalletContextState): Promise<Savin
 export async function mock_createSaving(
     wallet: WalletContextState,
     saving: Pick<Saving, 'goal' | 'name' | 'startDate' | 'paymentDate'>
-): Promise<Saving | null> {
-    mock.goal = saving.goal;
-    mock.name = saving.name;
-    mock.startDate = saving.startDate;
-    mock.paymentDate = saving.paymentDate;
+) {
     return mock;
 }
 

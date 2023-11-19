@@ -11,7 +11,7 @@ export default function TestPage() {
 
     createSaving(wallet, {goal: 200, name: " ", startDate: new Date(0), paymentDate: new Date(5000)})
         .then(sav => {console.log("sav", sav); console.log("sav.id ", sav?.id); pay(wallet, sav?.id??0,100)
-            .then(b => {console.log(b); console.log(getSavings(wallet))})})
+            .then(b => {console.log("paid is ", b); console.log("savings ", getSavings(wallet))})})
 
     //const a = useRef(0);
     //useEffect(() => {
