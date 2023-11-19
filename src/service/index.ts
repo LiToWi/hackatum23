@@ -117,17 +117,17 @@ const mock = {
 
 // to mock, change the content here
 export async function getSavings(wallet: WalletContextState): Promise<Saving[] | null> {
-    // return mock_getSavings(wallet);
-    return blockchain_getSavings(wallet);
+    return mock_getSavings(wallet);
+    // return blockchain_getSavings(wallet);
 }
 export async function createSaving(wallet: WalletContextState, saving:
     Pick<Saving, 'goal' | 'name' | 'startDate' | 'paymentDate'>): Promise<Saving | null> {
-    // return mock_createSaving(wallet, saving);
-    return blockchain_createSaving(wallet, saving);
+    return mock_createSaving(wallet, saving);
+    // return blockchain_createSaving(wallet, saving);
 }
 export async function pay(wallet: WalletContextState, id: number, amount: number) {
-    // return mock_pay(wallet, id, amount);
-    return blockchain_pay(wallet, amount, id);
+    return mock_pay(wallet, id, amount);
+    // return blockchain_pay(wallet, id, amount);
 }
 
 export async function mock_getSavings(wallet: WalletContextState): Promise<Saving[] | null> {
@@ -138,15 +138,21 @@ export async function mock_createSaving(
     wallet: WalletContextState,
     saving: Pick<Saving, 'goal' | 'name' | 'startDate' | 'paymentDate'>
 ): Promise<Saving | null> {
-    return null;
+    mock.goal = saving.goal;
+    mock.name = saving.name;
+    mock.startDate = saving.startDate;
+    mock.paymentDate = saving.paymentDate;
+    return mock;
 }
 
 export async function mock_pay(
     wallet: WalletContextState,
     id: number,
     amount: number
-): Promise<Saving | null> {
-    return Promise.resolve(mock);
+) {
+    mock.accountBalance += amount;
+    mock.payments.push({amount: amount, date: new Date(Date.now()), id: mock.payments.length} as Payment)
+    return true;
 }
 
 export function retrieve(): boolean {
@@ -226,15 +232,21 @@ export async function blockchain_createSaving(wallet: WalletContextState, sav: P
     saving.id = userAccount.accounts;
 
     console.log('test1', userAccount.accounts);
+    console.log("ownerPublic ", ownerPublicKey.toBase58());
+    console.log(userAccount.accounts);
+
     const [savingsAccountPk] =  web3.PublicKey.findProgramAddressSync(
         [Buffer.from("savings2"), ownerPublicKey.toBuffer(),
             userMint.toBuffer(), new Uint8Array([userAccount.accounts])], programId);
+    console.log("savingAcc ok")
     const [savingTokenPk] = web3.PublicKey.findProgramAddressSync(
         [Buffer.from("token_savings1"),ownerPublicKey.toBuffer(),
             userMint.toBuffer(), new Uint8Array([userAccount.accounts])], programId);
+    console.log("savingToken ok")
     const [authTokenPk] = web3.PublicKey.findProgramAddressSync(
         [Buffer.from("auth1"), ownerPublicKey.toBuffer(),
             userMint.toBuffer(), new Uint8Array([userAccount.accounts])], programId);
+    console.log("authToken ok")
 
     // send the init command
     const txHash = await program.methods
@@ -249,13 +261,13 @@ export async function blockchain_createSaving(wallet: WalletContextState, sav: P
             user: userAccountPublicKey,
         })
         .rpc({ skipPreflight: true });
-
+    console.log("anfrage ok")
     // Confirm transaction
     await program.provider.connection.confirmTransaction(txHash);
-
+    console.log("antwort ok")
     // get the savings
-    console.log( await program.account.user.fetch(savingsAccountPk))
-    console.log('test2', userAccount.accounts);
+    // console.log( await program.account.user.fetch(savingsAccountPk))
+    // console.log('test2', userAccount.accounts);
 
     return saving;
 }
@@ -272,7 +284,7 @@ export async function blockchain_pay(wallet: WalletContextState, id: number, amo
     const userAccount: User = {accounts: germanAccount.anzahl as number};
 
     if (id >= userAccount.accounts) {
-        console.log("saving account id doesn't exist");
+        console.log("saving account id ", id , " doesn't exist in range ", userAccount.accounts);
         return false;
     }
     // get necessary keys

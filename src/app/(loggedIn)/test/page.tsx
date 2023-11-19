@@ -10,7 +10,8 @@ export default function TestPage() {
         name: "some_saving_account", goal: 5000, accessible: false, staking: false, id: 0, payments: [], accountBalance: 0, paid: 0};
 
     createSaving(wallet, {goal: 200, name: " ", startDate: new Date(0), paymentDate: new Date(5000)})
-        .then(sav => {console.log(sav); console.log(sav?.id); pay(wallet, sav?.id??0,100). then(console.log)})
+        .then(sav => {console.log("sav", sav); console.log("sav.id ", sav?.id); pay(wallet, sav?.id??0,100)
+            .then(b => {console.log(b); console.log(getSavings(wallet))})})
 
     //const a = useRef(0);
     //useEffect(() => {
