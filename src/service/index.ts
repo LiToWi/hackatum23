@@ -21,7 +21,6 @@ export type Payment = {
 export type Saving = {
     accessible: boolean;
     staking: boolean;
-    accountBalance: number;
     paymentDate: Date;
     startDate: Date;
     goal: number;
@@ -101,7 +100,6 @@ export async function getUser(wallet: WalletContextState) {
 const mock = {
     accessible: true,
     staking: true,
-    accountBalance: 50,
     paymentDate: new Date(),
     startDate: new Date(),
     goal: 1000,
@@ -114,7 +112,10 @@ export async function getSavings(wallet): Promise<Saving[] | null> {
     return Promise.resolve([mock]);
 }
 
-export function createSaving(wallet, saving: Saving): Saving | null {
+export async function createSaving(
+    wallet,
+    saving: Pick<Saving, 'goal' | 'name' | 'startDate' | 'paymentDate'>
+): Promise<Saving | null> {
     return null;
 }
 
