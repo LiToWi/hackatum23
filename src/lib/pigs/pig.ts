@@ -94,12 +94,17 @@ export class Pig {
                 this.textElement.visible(false);
             }, 2000);
         });
-        this.element.on('mouseleave', () => {});
+        this.element.on('mouseover', function () {
+            document.body.style.cursor = 'pointer';
+        });
+        this.element.on('mouseleave', () => {
+            document.body.style.cursor = 'default';
+        });
     }
 
     feed(amount: number) {
         this.xp += (amount * 1.7 * this.mood) / 10;
-        //mood = options.payed - (0 - options.startTime) * (options.goal / (options.endTime - options.startTime)); //TODO insert now for 0
+        this.mood = this.saving.paid / (Date.now() - this.saving.startDate.getDate()) * (this.saving.goal / (this.saving.paymentDate.getDate() - this.saving.paymentDate.getDate()));
 
         //Level Up
         let threshold = Pig.BASE_SOL_PER_LEVEL + Math.pow(this.level, 1.2);

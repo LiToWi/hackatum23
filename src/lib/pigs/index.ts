@@ -98,6 +98,41 @@ export function initCanvas(options: Options) {
         options.savings[0]
     );
 
+    //Shards
+    var shard1_img = new Image();
+    shard1_img.src = '/BrokenPiggy1.png';
+    var shard1_konva = new Konva.Image({
+        image: shard1_img,
+        x: -10000,
+        y: 0,
+        width: 3 * pig.element.width()/5,
+        height: 9 * pig.element.height() / 10 ,
+        draggable: true,
+        visble: false,
+    });
+    var shard2_img = new Image();
+    shard2_img.src = '/BrokenPiggy2.png';
+    var shard2_konva = new Konva.Image({
+        image: shard2_img,
+        x: -10000,
+        y: 0,
+        width: 2 * pig.element.width()/3,
+        height: 2 * pig.element.height()/3,
+        draggable: true,
+        visble: false,
+    });
+    var shard3_img = new Image();
+    shard3_img.src = '/BrokenPiggy3.png';
+    var shard3_konva = new Konva.Image({
+        image: shard3_img,
+        x: -10000,
+        y: 0,
+        width: 3 * pig.element.width()/5,
+        height: 2 * pig.element.height()/3,
+        draggable: true,
+        visble: false,
+    });
+
     //Cursor styling
     let pre_move_x = coin_konva.x();
     let pre_move_y = coin_konva.y();
@@ -136,7 +171,7 @@ export function initCanvas(options: Options) {
             //TODO insert feed here
         }
 
-        if (options.payed >= options.goal || true) {
+        if (options.payed >= options.goal) {
             sledge_konva.show();
         }
 
@@ -151,22 +186,40 @@ export function initCanvas(options: Options) {
         document.body.style.cursor = 'grab';
     });
     sledge_konva.on('dragend', function () {
-        if (
-            sledge_konva.x() + sledge_konva.getWidth() > pig.element.x() &&
-            sledge_konva.x() + (30 / 450) * pig.element.width() <
-                pig.element.x() + pig.element.width() &&
-            sledge_konva.y() +
-                sledge_konva.getHeight() -
-                (60 / 450) * pig.element.height() >
-                pig.element.y() &&
-            sledge_konva.y() + 40 < pig.element.y() + pig.element.height()
-        ) {
+        if((sledge_konva.x()+sledge_konva.getWidth()) > pig.element.x() && (sledge_konva.x()+30/450*pig.element.width()) < pig.element.x() + pig.element.width() && (sledge_konva.y() + sledge_konva.getHeight()-60/450*pig.element.height()) > pig.element.y() && (sledge_konva.y()+40) < pig.element.y() + pig.element.height()){
             //DO STUFF
             sledge_konva.hide();
+            pig.element.hide();
+
             document.body.style.cursor = 'default';
+            shard1_konva.setPosition({ x: pig.element.x(), y: pig.element.y() });
+            shard2_konva.setPosition({ x: pig.element.x(), y: pig.element.y() });
+            shard3_konva.setPosition({ x: pig.element.x(), y: pig.element.y() });
+            shard1_konva.show();
+            shard2_konva.show();
+            shard3_konva.show();
+            pig.element.setPosition({ x: -10000, y: -10000 });
         }
     });
     sledge_konva.on('mouseleave', function () {
+        document.body.style.cursor = 'grab';
+    });
+    shard1_konva.on('mouseover', function () {
+        document.body.style.cursor = 'grab';
+    });
+    shard2_konva.on('mouseover', function () {
+        document.body.style.cursor = 'grab';
+    });
+    shard3_konva.on('mouseover', function () {
+        document.body.style.cursor = 'grab';
+    });
+    shard1_konva.on('mouseleave', function () {
+        document.body.style.cursor = 'default';
+    });
+    shard2_konva.on('mouseleave', function () {
+        document.body.style.cursor = 'default';
+    });
+    shard3_konva.on('mouseleave', function () {
         document.body.style.cursor = 'default';
     });
 
@@ -189,6 +242,10 @@ export function initCanvas(options: Options) {
     layer.add(coin_konva);
     layer.add(sledge_konva);
     layer.add(add);
+    layer.add(shard1_konva);
+        layer.add(shard2_konva);
+        layer.add(shard3_konva);
+        layer.add(coin_konva);
     stage.add(layer);
 
     pig.mountService(serviceLayer);
