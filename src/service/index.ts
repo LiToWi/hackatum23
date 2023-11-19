@@ -27,6 +27,7 @@ export type Saving = {
     name: string;
     id: number;
     payments: Payment[];
+    paid: number;
 };
 
 type StoredSaving = Omit<Saving, 'payments' | 'paymentDate' | 'startDate'> & {
@@ -106,6 +107,7 @@ const mock = {
     name: 'test',
     id: 0,
     payments: [{ amount: 0, date: new Date(), id: 0 }],
+    paid: 0,
 } satisfies Saving;
 
 export async function getSavings(wallet): Promise<Saving[] | null> {

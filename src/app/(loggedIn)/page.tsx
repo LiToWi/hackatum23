@@ -2,7 +2,7 @@
 
 import { NewSaving } from '@/components/custom/NewSaving';
 import { Slider } from '@/components/ui/slider';
-import { initCanvas } from '@/lib/piggy';
+import { initCanvas } from '@/lib/pigs';
 import { Saving, createSaving, getSavings, pay } from '@/service';
 import { useWallet } from '@solana/wallet-adapter-react';
 import Image from 'next/image';
@@ -70,6 +70,8 @@ export default function Home() {
                     goal: saving.goal,
                     name: saving.name,
                     payed,
+                    savings: s,
+                    onAdd: () => setNewSavingIsShown(true),
                     getCoinWorth: () => coinWorthRef.current,
                     onPayment: (amount) => {
                         pay(wallet, saving.id, amount).then((s) => {
@@ -110,6 +112,7 @@ export default function Home() {
             </div>
             <NewSaving
                 open={newSavingIsShown}
+                onClose={() => setNewSavingIsShown(false)}
                 onSubmit={onNewSaving}
             ></NewSaving>
         </main>

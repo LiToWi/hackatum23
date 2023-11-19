@@ -21,6 +21,7 @@ import { DateRange } from 'react-day-picker';
 export function NewSaving(props: {
     open: boolean;
     onSubmit: (values: { name: string; goal: number; date: DateRange }) => void;
+    onClose: () => void;
 }) {
     const [date, setDate] = useState<DateRange | undefined>({
         from: new Date(),
@@ -29,7 +30,7 @@ export function NewSaving(props: {
     const name = useRef<HTMLInputElement>(null);
     const goal = useRef<HTMLInputElement>(null);
 
-    const onSubmit = (e: React.FormEvent) => {
+    const onSubmit = (e: React.SyntheticEvent) => {
         e.preventDefault();
         if (
             !date ||
@@ -48,7 +49,7 @@ export function NewSaving(props: {
     };
 
     return (
-        <Dialog open={props.open}>
+        <Dialog open={props.open} onOpenChange={() => props.onClose()}>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
                     <DialogTitle>New Saving</DialogTitle>
@@ -124,7 +125,7 @@ export function NewSaving(props: {
                     </div>
                 </div>
                 <DialogFooter>
-                    <Button type="submit" onSubmit={onSubmit}>
+                    <Button type="submit" onClick={onSubmit}>
                         Adopt pig
                     </Button>
                 </DialogFooter>
