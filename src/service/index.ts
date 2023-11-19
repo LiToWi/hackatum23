@@ -138,6 +138,8 @@ export async function mock_createSaving(
     wallet: WalletContextState,
     saving: Pick<Saving, 'goal' | 'name' | 'startDate' | 'paymentDate'>
 ) {
+    mock.paymentDate = new Date(Date.now() + 5 * 60 * 60) // 5 Stunden
+    mock.startDate = new Date(Date.now())
     return mock;
 }
 
@@ -151,8 +153,14 @@ export async function mock_pay(
     return true;
 }
 
-export function retrieve(): boolean {
-    return true;
+export async function retrieve(wallet: WalletContextState, id: number) {
+    return mock_retrieve(wallet, id);
+}
+
+export async function mock_retrieve(wallet: WalletContextState, id: number) {
+    let amount = mock.accountBalance;
+    mock.accountBalance = 0;
+    return amount;
 }
 
 // should only be accessible to logged in and verified users
