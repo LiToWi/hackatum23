@@ -21,13 +21,13 @@ export default function RootLayout({
                     : new URLSearchParams({ redirect: pathName })
             }`
         );
+
+        return (
+            <div className="flex justify-center items-center h-full">
+                <Icons.spinner className="animate-spin w-52 h-52"></Icons.spinner>
+            </div>
+        );
     }
 
-    return wallet.wallet ? (
-        children
-    ) : (
-        <div className="flex justify-center items-center h-full">
-            <Icons.spinner className="animate-spin w-52 h-52"></Icons.spinner>
-        </div>
-    );
+    return children;
 }

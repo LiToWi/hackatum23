@@ -2,32 +2,60 @@
 
 import { Slider } from '@/components/ui/slider';
 import { initCanvas } from '@/lib/piggy';
+import { getSavings, pay } from '@/service';
+import { useWallet } from '@solana/wallet-adapter-react';
 import Image from 'next/image';
 import { useRef, useEffect, useState } from 'react';
 
 const PIG_CONTAINER_CLASS = 'pig-container';
 
 export default function Home() {
+    const wallet = useWallet();
     const pig = useRef<ReturnType<typeof initCanvas> | null>(null);
+    const savings = useRef<Awaited<ReturnType<typeof getSavings>> | null>(null);
+    const saving = savings.current?.[0];
 
-    const [coinWorth, setCoinWorth] = useState(50);
-    const [balance, setBalance] = useState(100);
-    const goal = 1000;
+    const payed =
+        saving?.payments.reduce((acc, curr) => acc + curr.amount, 0) ?? 0;
+    const remaining = (saving?.goal ?? 0) - payed;
 
-    useEffect(() => { //TODO REMOVE MOCK
-        pig.current = initCanvas({
-            containerId: PIG_CONTAINER_CLASS,
-            width: window.innerWidth,
-            height: window.innerHeight,
-            startTime: 0,//MOCK
-            endTime: 0,//MOCK
-            goal: 0, //MOCK
-            getBalance: () => 100,//MOCK
-            getCoinWorth: () => 5,//MOCK
-            onPayment: (amount: number) => {//MOCK
-                setBalance((prev) => prev + amount);
-            }
-        });
+    const coinWorthRef = useRef(remaining / 2);
+    const [coinWorth, _setCoinWorth] = useState(coinWorthRef.current);
+
+    const setCoinWorth = (coinWorth: number) => {
+        coinWorthRef.current = coinWorth;
+        _setCoinWorth(coinWorth);
+    };
+
+    useEffect(() => {
+        getSavings(wallet)
+            .then((s) => {
+                if (!s) return;
+
+                savings.current = s;
+                const saving = s[0];
+
+                setCoinWorth(remaining / 2);
+
+                pig.current = initCanvas({
+                    containerId: PIG_CONTAINER_CLASS,
+                    width: window.innerWidth,
+                    height: window.innerHeight,
+                    startTime: saving.startDate,
+                    endTime: saving.paymentDate,
+                    goal: saving.goal,
+                    name: saving.name,
+                    payed,
+                    getCoinWorth: () => coinWorthRef.current,
+                    onPayment: (amount) => {
+                        pay(wallet, saving.id, amount).then((s) => {
+                            if (!s) return;
+                            savings.current![0] = s;
+                        });
+                    },
+                });
+            })
+            .finally(() => {});
     }, []);
 
     useEffect(() => {
@@ -49,13 +77,11 @@ export default function Home() {
                     </div>
                 </div>
                 <Slider
-                    onValueChange={(values: number[]) => {
-                        const [n] = values;
-                        setCoinWorth(n);
-                    }}
-                    defaultValue={[coinWorth]} //TODO Balance/2
-                    max={100} //TODO Balance
-                    step={1} //TODO 0.1
+                    onValueChange={([n]: number[]) => setCoinWorth(n)}
+                    defaultValue={[coinWorth]}
+                    max={remaining}
+                    min={0}
+                    step={1}
                 />
             </div>
         </main>

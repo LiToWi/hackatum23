@@ -14,7 +14,7 @@ export type User = {
 
 export type Payment = {
     amount: number;
-    date: string;
+    date: Date;
     id: number;
 };
 
@@ -22,16 +22,19 @@ export type Saving = {
     accessible: boolean;
     staking: boolean;
     accountBalance: number;
-    paymentDate: string;
+    paymentDate: Date;
+    startDate: Date;
     goal: number;
     name: string;
     id: number;
     payments: Payment[];
 };
 
-type StoredSaving = Omit<Saving, 'payments'> & {
+type StoredSaving = Omit<Saving, 'payments' | 'paymentDate' | 'startDate'> & {
     datesOfPayments: number[];
     amountsOfPayments: number[];
+    paymentDate: number;
+    startDate: number;
 };
 
 function getProgram(wallet: WalletContextState) {
@@ -95,16 +98,32 @@ export async function getUser(wallet: WalletContextState) {
     }
 }
 
-export function getSavings(): Saving[] | null {
+const mock = {
+    accessible: true,
+    staking: true,
+    accountBalance: 50,
+    paymentDate: new Date(),
+    startDate: new Date(),
+    goal: 1000,
+    name: 'test',
+    id: 0,
+    payments: [{ amount: 0, date: new Date(), id: 0 }],
+} satisfies Saving;
+
+export async function getSavings(wallet): Promise<Saving[] | null> {
+    return Promise.resolve([mock]);
+}
+
+export function createSaving(wallet, saving: Saving): Saving | null {
     return null;
 }
 
-export function createSaving(): Saving | null {
-    return null;
-}
-
-export function pay(): boolean {
-    return true;
+export async function pay(
+    wallet,
+    id: number,
+    amount: number
+): Promise<Saving | null> {
+    return Promise.resolve(mock);
 }
 
 export function retrieve(): boolean {
