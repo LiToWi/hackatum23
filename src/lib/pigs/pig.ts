@@ -16,7 +16,7 @@ export class Pig {
 
     public element: KonvaImage;
     private xp = 0;
-    private mood = 5;
+    private mood = 2;
     private img: HTMLImageElement;
     private level = 1;
     private saving: Saving;
@@ -104,7 +104,7 @@ export class Pig {
 
     feed(amount: number) {
         this.xp += (amount * 1.7 * this.mood) / 10;
-        this.mood = this.saving.paid / (Date.now() - this.saving.startDate.getDate()) * (this.saving.goal / (this.saving.paymentDate.getDate() - this.saving.paymentDate.getDate()));
+        this.mood++;
 
         //Level Up
         let threshold = Pig.BASE_SOL_PER_LEVEL + Math.pow(this.level, 1.2);
@@ -113,9 +113,12 @@ export class Pig {
             this.level++;
         }
 
-        const img = new Image();
+        let img = new Image();
+        img.onload = () => this.element.image(img);
         img.src = Pig.MOOD_IMGS[Math.max(Math.floor(this.mood / 4), 0)];
-        this.element.image(img);
+
+        this.saving.paid += amount;
+
     }
 
     mount(layer: Layer) {

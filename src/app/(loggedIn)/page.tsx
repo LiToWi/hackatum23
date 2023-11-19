@@ -17,6 +17,7 @@ export default function Home() {
     const savings = useRef<Saving[]>([]);
     const saving = savings.current?.[0];
     const [newSavingIsShown, setNewSavingIsShown] = useState(false);
+    const [userBalance, setUserBalance] = useState(100);
 
     const payed =
         saving?.payments.reduce((acc, curr) => acc + curr.amount, 0) ?? 0;
@@ -77,6 +78,7 @@ export default function Home() {
                         pay(wallet, saving.id, amount).then((s) => {
                             if (!s) return;
                             savings.current![0] = s;
+                            setUserBalance(prev=>prev-amount);
                         });
                     },
                 });
@@ -105,7 +107,7 @@ export default function Home() {
                 <Slider
                     onValueChange={([n]: number[]) => setCoinWorth(n)}
                     defaultValue={[coinWorth]}
-                    max={remaining}
+                    max={userBalance}
                     min={0}
                     step={1}
                 />

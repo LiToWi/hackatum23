@@ -148,7 +148,7 @@ export async function mock_pay(
 ) {
     mock.accountBalance += amount;
     mock.payments.push({amount: amount, date: new Date(Date.now()), id: mock.payments.length} as Payment)
-    return true;
+    return mock;
 }
 
 export function retrieve(): boolean {

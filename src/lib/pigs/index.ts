@@ -23,7 +23,7 @@ type Options = {
 };
 
 export function initCanvas(options: Options) {
-    let pig_width = options.width / 7;
+    let pig_width = options.width / 3;
     let pig_height = (pig_width / 200) * 137;
 
     //Konva Stage
@@ -168,7 +168,8 @@ export function initCanvas(options: Options) {
                 y: coin_konva.y() + coin_konva.height() / 2,
             });
             payment_text.visible(true);
-            //TODO insert feed here
+            pig.feed(options.getCoinWorth());
+            options.onPayment(options.getCoinWorth());
         }
 
         if (options.payed >= options.goal) {
@@ -276,18 +277,18 @@ export function initCanvas(options: Options) {
 
     anim.start();
 
-    // let n = 1
-    // var movePig = new Konva.Animation(function (frame) {
-    //     if (pig.element.x() + pig.element.width() >= stage.width()) {
-    //         n = -1;
-    //     }
-    //     else if (pig.element.x() <= 0){
-    //         n = 1;
-    //     }
-    //     pig.element.x(Math.random() > 0.5 ? pig.element.x() + n : 0);
-    // }, layer);
+    let n = 1
+    var movePig = new Konva.Animation(function (frame) {
+        if (pig.element.x() + pig.element.width() >= stage.width()) {
+            n = -1;
+        }
+        else if (pig.element.x() <= 0){
+            n = 1;
+        }
+        pig.element.x(Math.random() > 0.5 ? pig.element.x() + n : 0);
+    }, layer);
 
-    // movePig.start();
+    movePig.start();
 
     //Expose Functionality
     return {
