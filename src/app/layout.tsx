@@ -8,8 +8,7 @@ const inter = Inter({ subsets: ['latin'] });
 
 // TODO: Fill in metadata
 export const metadata: Metadata = {
-    title: 'NAME',
-    description: 'FILL',
+    title: 'Porkfolio',
 };
 
 export default function RootLayout({

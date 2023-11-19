@@ -1,5 +1,4 @@
 import { Saving } from '@/service';
-import { lastDayOfDecade } from 'date-fns';
 import Konva from 'konva';
 import { Layer } from 'konva/lib/Layer';
 import { type Image as KonvaImage } from 'konva/lib/shapes/Image';
@@ -22,17 +21,23 @@ export class Pig {
     private saving: Saving;
     private textElement: Text;
     private bubblesElement: Rect;
+    private layer: Layer;
+    private serviceLayer: Layer;
 
     constructor(
         width: number,
         height: number,
         x: number,
         y: number,
-        saving: Saving
+        saving: Saving,
+        layer: Layer,
+        serviceLayer: Layer
     ) {
         this.img = new Image();
         this.img.src = Pig.MOOD_IMGS[Math.max(Math.floor(this.mood / 4), 0)];
         this.saving = saving;
+        this.layer = layer;
+        this.serviceLayer = serviceLayer;
 
         this.element = new Konva.Image({
             image: this.img,
@@ -100,13 +105,21 @@ export class Pig {
         this.element.on('mouseleave', () => {
             document.body.style.cursor = 'default';
         });
+
+        this.layer.add(this.element);
+        this.serviceLayer.add(this.bubblesElement);
+        this.serviceLayer.add(this.textElement);
     }
 
     feed(amount: number) {
         this.xp += (amount * 1.7 * this.mood) / 10;
-        this.mood = this.saving.paid / (Date.now() - this.saving.startDate.getDate()) * (this.saving.goal / (this.saving.paymentDate.getDate() - this.saving.paymentDate.getDate()));
+        this.mood =
+            (this.saving.paid /
+                (Date.now() - this.saving.startDate.getDate())) *
+            (this.saving.goal /
+                (this.saving.paymentDate.getDate() -
+                    this.saving.paymentDate.getDate()));
 
-        //Level Up
         let threshold = Pig.BASE_SOL_PER_LEVEL + Math.pow(this.level, 1.2);
         while (this.xp >= threshold) {
             this.xp -= threshold;
@@ -118,12 +131,66 @@ export class Pig {
         this.element.image(img);
     }
 
-    mount(layer: Layer) {
-        layer.add(this.element);
-    }
+    break() {
+        const group = new Konva.Group({
+            x: this.element.x(),
+            y: this.element.y(),
+            rotation: 20,
+        });
 
-    mountService(layer: Layer) {
-        layer.add(this.bubblesElement);
-        layer.add(this.textElement);
+        const img1 = new Image();
+        img1.src = '/BrokenPiggy1.png';
+        const shard1 = new Konva.Image({
+            image: img1,
+            x: -25,
+            y: -25,
+            width: (3 * this.element.width()) / 5,
+            height: (9 * this.element.height()) / 10,
+            rotation: 20,
+        });
+        const img2 = new Image();
+        img2.src = '/BrokenPiggy2.png';
+        const shard2 = new Konva.Image({
+            image: img2,
+            x: 50,
+            y: 100,
+            width: (2 * this.element.width()) / 3,
+            height: (2 * this.element.height()) / 3,
+            rotation: -50,
+        });
+        const img3 = new Image();
+        img3.src = '/BrokenPiggy3.png';
+        const shard3 = new Konva.Image({
+            image: img3,
+            x: -19,
+            y: 15,
+            width: (3 * this.element.width()) / 5,
+            height: (2 * this.element.height()) / 3,
+        });
+        group.add(shard3, shard2, shard1);
+
+        const random = (min: number, max: number) =>
+            Math.random() * (max - min) + min;
+
+        const img = new Image();
+        img.src = '/coin.png';
+        for (let i = 0; i < 30; i++) {
+            const size = random(
+                (1 / 10) * this.element.width(),
+                (1 / 3) * this.element.width()
+            );
+            const coin = new Konva.Image({
+                image: img,
+                x: random(-25, 150),
+                y: random(-35, 55),
+                width: size,
+                height: size,
+            });
+            group.add(coin);
+        }
+
+        this.layer.add(group);
+
+        this.element.destroy();
     }
 }

@@ -14,7 +14,19 @@ const PIG_CONTAINER_CLASS = 'pig-container';
 export default function Home() {
     const wallet = useWallet();
     const pig = useRef<ReturnType<typeof initCanvas> | null>(null);
-    const savings = useRef<Saving[]>([]);
+    const savings = useRef<Saving[]>([
+        {
+            id: 1,
+            name: 'Test',
+            goal: 100,
+            startDate: new Date(),
+            paymentDate: new Date(),
+            payments: [],
+            accessible: true,
+            staking: true,
+            paid: 100,
+        },
+    ]);
     const saving = savings.current?.[0];
     const [newSavingIsShown, setNewSavingIsShown] = useState(false);
 
@@ -65,11 +77,6 @@ export default function Home() {
                     containerId: PIG_CONTAINER_CLASS,
                     width: window.innerWidth,
                     height: window.innerHeight,
-                    startTime: saving.startDate,
-                    endTime: saving.paymentDate,
-                    goal: saving.goal,
-                    name: saving.name,
-                    payed,
                     savings: s,
                     onAdd: () => setNewSavingIsShown(true),
                     getCoinWorth: () => coinWorthRef.current,
@@ -81,7 +88,7 @@ export default function Home() {
                     },
                 });
             })
-            .finally(() => {});
+            .finally(console.log);
     }, []);
 
     useEffect(() => {
